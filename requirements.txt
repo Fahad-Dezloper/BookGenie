@@ -1,0 +1,10 @@
+flask
+template-render
+request
+redirect
+url_for
+pandas
+jsonify
+
+# AIzaSyCynNRdp-2oD5zJiVE8plnTeVJczIcdTFU
+# AIzaSyDKdxfXy9hPhXK75Wf7ogXl-WZ6pGSHcGE

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: "Roboto", sans-serif;  
+            background-color: #FAF0E6;
+        }
+        .bookheading {
+            text-align: center;
+            font-size: 45px;
+        }
+        .formISBN {
+            font-size: 20px;
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .formISBN input {
+            outline: none;
+            font-size: 18px;
+            border: 2px solid green;
+            padding: 5px 6px;
+        }
+        .button-33 {
+            background-color: #c2fbd7;
+            border-radius: 100px;
+            box-shadow: rgba(44, 187, 99, .2) 0 -25px 18px -14px inset, rgba(44, 187, 99, .15) 0 1px 2px, rgba(44, 187, 99, .15) 0 2px 4px, rgba(44, 187, 99, .15) 0 4px 8px, rgba(44, 187, 99, .15) 0 8px 16px, rgba(44, 187, 99, .15) 0 16px 32px;
+            color: green;
+            cursor: pointer;
+            display: inline-block;
+            font-family: CerebriSans-Regular, -apple-system, system-ui, Roboto, sans-serif;
+            padding: 7px 20px;
+            text-align: center;
+            text-decoration: none;
+            transition: all 250ms;
+            border: 0;
+            font-size: 16px;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        .button-33:hover {
+            box-shadow: rgba(44, 187, 99, .35) 0 -25px 18px -14px inset, rgba(44, 187, 99, .25) 0 1px 2px, rgba(44, 187, 99, .25) 0 2px 4px, rgba(44, 187, 99, .25) 0 4px 8px, rgba(44, 187, 99, .25) 0 8px 16px, rgba(44, 187, 99, .25) 0 16px 32px;
+            transform: scale(1.05) rotate(-1deg);
+        }
+        .cols {
+            padding: 0 25px;
+            display: flex;
+            justify-content: space-evenly;
+            margin-top: 20px;
+        }
+        .col {
+            border: 1px solid green;
+            padding: 10px;
+            max-width: 300px;
+        }
+        .col img {
+            width: 50%;
+        }
+        .title, .author {
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="bookheading">Book Details</h1>
+    <form action="/fetch_details" method="POST" class="formISBN">
+        <label for="isbn">Enter book ISBN:</label>
+        <input type="text" id="isbn" name="isbn" required>
+        <button type="submit" class="button-33">Fetch Details</button>
+    </form>
+
+    <form action="/save_to_excel" method="POST" class="saveToExcelForm">
+        <input type="hidden" id="excelData" name="excelData" value="">
+        <button type="submit" class="button-33">Save to Excel</button>
+    </form>
+
+    <div class="cols">
+        <!-- Book details display here -->
+        <div class="col">
+            {% if title and authors %}
+            <div id="bookDetails">
+                <p><span class="title">Title:</span><input type="text" id="title" name="title" value="{{ title }}" required></p>
+                <p><span class="author">Authors:</span><input type="text" id="author" name="author" value="{{ authors }}"></p>
+                <p><span class="author">Publisher:</span><input type="text" id="publisher" name="publisher" value="{{ publisher }}"></p>
+                <p><span class="author">Page Count:</span><input type="text" id="pageCount" name="pageCount" value="{{ pageCount }}"></p>
+                <img src="{{ thumbnail }}" alt="Book Thumbnail">
+                <input type="text" id="thumbnail" name="thumbnail" value="{{ thumbnail }}">
+            </div>
+            {% endif %}
+            {% if book_details %}
+            <div id="bookDetails">
+                <h2>Additional Book Details</h2>
+                <h4>{{ book_details | safe }}</h4>
+            </div>
+            {% endif %}
+
+            <button class="button-33" id="updateButton">Update</button>
+
+            {% if error %}
+            <div id="error">
+                <p>{{ error }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col">
+            {% if description %}
+            <div id="bookDescription">
+                <h2>Book Description</h2>
+                <p>{{ description }}</p>
+            </div>
+{% endif %}                     
+        </div>
+
+        <div class="col">
+            {% if author_description %}
+            <div id="authorDescription">
+                <h2>Author Description</h2>
+                <p>{{ author_description }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col">
+            {% if meta_description %}
+            <div id="metaDescription">
+                <h2>Meta Description</h2>
+                <p>{{ meta_description }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="cols">
+        <div class="">
+            {% if not title and not authors %}
+            <form action="/fetch_details" method="POST" class="formISBN">
+                <label for="book">Book Name:</label><br>
+                <input type="text" id="book" name="book" required><br>
+                <label for="author">Author:</label><br>
+                <input type="text" id="author" name="author" required><br><br>
+                <button type="submit" class="button-33">Submit</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    </div>
+ 
+    <script>
+   document.addEventListener("DOMContentLoaded", function() {
+    // Get the hidden input field for Excel data
+    var excelDataInput = document.getElementById('excelData');
+    
+    // Get all elements within the #bookDetails section
+    var bookDetailsElements = document.querySelectorAll('#bookDetails input, #bookDetails p, #bookDetails h4');
+    
+    // Initialize an empty object to store the Excel data
+    var bookDetails = {};
+
+    // Loop through each element within #bookDetails
+    bookDetailsElements.forEach(function(element) {
+        // Check the type of element
+        if (element.nodeName === 'INPUT') {
+            // For input fields, store the value with the corresponding label
+            var label = element.previousSibling.textContent.trim();
+            var value = element.value.trim();
+            bookDetails[label] = value;
+        } else {
+            // For other elements (paragraphs and headings), store their text content
+            var key = element.nodeName === 'H4' ? 'Additional Details' : element.textContent.trim();
+            var value = element.textContent.trim();
+            bookDetails[key] = value;
+        }
+    });
+
+    // Retrieve edited data from sessionStorage, if available
+    var editedDataString = sessionStorage.getItem('editedData');
+    if (editedDataString) {
+        var editedData = JSON.parse(editedDataString);
+        // Update the Excel data with edited values, if they exist
+        Object.keys(editedData).forEach(function(key) {
+            if (editedData[key]) {
+                bookDetails[key] = editedData[key];
+            }
+        });
+    }
+
+    // Convert the bookDetails object to a string
+    var bookDetailsText = '';
+    Object.keys(bookDetails).forEach(function(key) {
+        bookDetailsText += key + ': ' + bookDetails[key] + '\n';
+    });
+
+    // Set the value of the hidden input field to the updated Excel data
+    excelDataInput.value = bookDetailsText.trim();
+});
+
+// Add event listener to the "Update" button
+document.getElementById('updateButton').addEventListener('click', function() {
+    // Collect edited data from input fields
+    var editedTitle = document.getElementById('title').value;
+    var editedAuthor = document.getElementById('author').value;
+    var editedPublisher = document.getElementById('publisher').value;
+    var editedPageCount = document.getElementById('pageCount').value;
+    var editedThumbnail = document.getElementById('thumbnail').value;
+
+    // Store edited data in JavaScript variables
+    var editedData = {
+        title: editedTitle,
+        author: editedAuthor,
+        publisher: editedPublisher,
+        pageCount: editedPageCount,
+        thumbnail: editedThumbnail
+    };
+
+    // Store edited data in sessionStorage for later use
+    sessionStorage.setItem('editedData', JSON.stringify(editedData));
+    window.location.replace(`/update/${editedTitle}/${editedAuthor}/${editedPublisher}/${editedPageCount}/${editedThumbnail}`)
+    // Optionally, you can provide feedback to the user that the data has been updated
+    alert('Data updated successfully!');
+});
+    </script>
+</body>
+</html>
